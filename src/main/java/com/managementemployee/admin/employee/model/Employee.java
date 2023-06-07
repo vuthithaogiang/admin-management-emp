@@ -1,14 +1,16 @@
 package com.managementemployee.admin.employee.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.databind.annotation.JsonAppend;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.managementemployee.admin.common.entity.BaseEntity;
 import com.managementemployee.admin.common.exception.InvalidEmailException;
 import com.managementemployee.admin.common.exception.InvalidSalaryException;
+import com.managementemployee.admin.furlough.model.Furlough;
 import com.managementemployee.admin.timesheet.model.Timesheet;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -51,9 +53,13 @@ public class Employee extends BaseEntity {
     @Transient
     private String fullName;
 
-//    @JsonBackReference
-//    @OneToMany
-//    private List<Timesheet> timesheetList;
+
+   @OneToMany(mappedBy = "employee",fetch = FetchType.EAGER)
+   private List<Timesheet> timesheetList;
+
+   @OneToMany(mappedBy = "employee",fetch = FetchType.EAGER)
+   @JsonIgnore
+   private List<Furlough> furloughList;
 
     public Employee() {
 

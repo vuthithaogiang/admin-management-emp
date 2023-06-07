@@ -1,17 +1,23 @@
 package com.managementemployee.admin.timesheet.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import com.managementemployee.admin.common.entity.BaseEntity;
 import com.managementemployee.admin.employee.model.Employee;
 import jakarta.persistence.*;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import org.springframework.validation.annotation.Validated;
 
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.NotNull;
 
 
 @Entity (name = "Timesheet")
 @Table(name = "timesheet")
+@Validated
 public class Timesheet extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,13 +40,25 @@ public class Timesheet extends BaseEntity {
     private Long totalHourWork;
 
 
+    @Min(1)
+    @Max(5)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer sequence;
+
+
     @ManyToOne
-    @JoinColumn(name = "emp_id", columnDefinition = "NOT NULL")
+    @JoinColumn(name = "emp_id")
+    @NotNull
     private Employee employee;
 
 
 
+    private Long minusLate;
+
+
+
     public Timesheet() {
+         this.sequence = 1;
 
     }
 
@@ -58,6 +76,9 @@ public class Timesheet extends BaseEntity {
             dateIn = LocalDate.now();
         }
     }
+
+
+
 
     public String getTimesheetId() {
         return "TIMES" + this.timesheetId;
@@ -108,5 +129,19 @@ public class Timesheet extends BaseEntity {
 
     public void setDateIn(LocalDate dateIn) {
         this.dateIn = dateIn;
+    }
+
+    public Integer getSequence() {
+        return this.sequence;
+    }
+
+    public void setSequence(Integer sequence){this.sequence = sequence;}
+
+    public Long getMinusLate() {
+        return this.minusLate;
+    }
+
+    public void setMinusLate(Long minusLate){
+        this.minusLate = minusLate;
     }
 }
