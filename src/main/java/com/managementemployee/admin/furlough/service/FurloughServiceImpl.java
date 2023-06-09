@@ -142,4 +142,42 @@ public class FurloughServiceImpl implements FurloughService {
         furloughExisting.setStatus(0);
         return furloughRepository.save(furloughExisting);
     }
+
+    @Override
+    public List<Furlough> acceptListFurlough(List<Furlough> furloughList) {
+            List<Furlough> furloughsExisting  = new ArrayList<>();
+
+            for(var item : furloughList){
+                if(furloughRepository.findById(item.getFurLoughInteger()) != null){
+                    furloughsExisting.add(item);
+                }
+            }
+
+            for(var item : furloughsExisting){
+                item.setStatus(1);
+            }
+
+            return furloughRepository.saveAll(furloughsExisting);
+
+    }
+
+    @Override
+    public List<Furlough> denyListFurlough(List<Furlough> furloughList) {
+
+        List<Furlough> furloughsExisting = new ArrayList<>();
+
+        for(var item : furloughList){
+            if(furloughRepository.findById(item.getFurLoughInteger()) != null){
+                furloughsExisting.add(item);
+            }
+        }
+
+        for(var item : furloughsExisting){
+            item.setStatus(0);
+        }
+
+        return furloughRepository.saveAll(furloughsExisting);
+
+
+    }
 }

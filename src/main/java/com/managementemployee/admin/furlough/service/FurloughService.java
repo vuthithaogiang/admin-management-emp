@@ -5,7 +5,7 @@ import com.managementemployee.admin.furlough.model.Furlough;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
+
 
 public interface FurloughService {
     public Furlough saveFurlough(int empId, Furlough request);
@@ -33,4 +33,8 @@ public interface FurloughService {
     public Furlough acceptFurlough(Furlough furlough);
 
     public Furlough denyFurlough(Furlough furlough);
+
+    public List<Furlough> acceptListFurlough(List<Furlough> furloughList);
+
+    public List<Furlough> denyListFurlough(List<Furlough> furloughList);
 }

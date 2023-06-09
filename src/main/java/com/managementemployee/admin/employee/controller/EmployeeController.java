@@ -2,6 +2,8 @@ package com.managementemployee.admin.employee.controller;
 
 import com.managementemployee.admin.common.exception.InvalidEmailException;
 import com.managementemployee.admin.employee.model.Employee;
+import com.managementemployee.admin.employee.model.EmployeeAvatarOnly;
+import com.managementemployee.admin.employee.model.EmployeeEmailOnly;
 import com.managementemployee.admin.employee.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -10,6 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/employee")
+@CrossOrigin(origins = "*")
 public class EmployeeController {
     @Autowired
     private EmployeeService employeeService;
@@ -44,5 +47,22 @@ public class EmployeeController {
     @PutMapping("delete/{id}")
     public String deleteEmployee(@PathVariable int id){
         return employeeService.deleteEmployeeById(id);
+    }
+
+
+    @PatchMapping("/updateAvatar/{empId}")
+    public Employee updateAvatar(@PathVariable Integer empId,
+                                 @RequestBody EmployeeAvatarOnly employeeAvatarOnly){
+
+        return employeeService.updateAvatar(empId, employeeAvatarOnly);
+
+    }
+
+
+    @PatchMapping("/updateEmail/{empId}")
+    public Employee updateEmail(@PathVariable Integer empId,
+                                @RequestBody EmployeeEmailOnly employeeEmailOnly) {
+
+        return employeeService.updateEmail(empId, employeeEmailOnly);
     }
 }

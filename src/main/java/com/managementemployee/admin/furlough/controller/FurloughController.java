@@ -12,11 +12,13 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/furlough")
+@CrossOrigin(origins = "*")
 public class FurloughController {
 
     @Autowired
     private FurloughService furloughService;
 
+    //http://localhost:8080/furlough?empId=5
     @PostMapping
     @ResponseBody
     public Furlough addFurlough(@RequestParam int empId,
@@ -75,17 +77,26 @@ public class FurloughController {
         return furloughService.getAllByEmpAcceptedFurloughToday();
     }
 
-    @PutMapping("/accept")
+    @PatchMapping("/accept")
     public Furlough acceptFurlough(@RequestBody Furlough furlough){
         return furloughService.acceptFurlough(furlough);
     }
 
-    @PutMapping("/deny")
+    @PatchMapping("/deny")
     public Furlough denyFurlough(@RequestBody Furlough furlough){
         return furloughService.denyFurlough(furlough);
     }
 
 
+    @PatchMapping("/acceptList")
+   public List<Furlough> acceptListFurlough(@RequestBody List<Furlough> furloughList){
+        return furloughService.acceptListFurlough(furloughList);
+   }
+
+   @PatchMapping("/denyList")
+   public List<Furlough> denyListFurlough(@RequestBody List<Furlough> furloughList){
+        return furloughService.denyListFurlough(furloughList);
+   }
 
 
 }

@@ -12,6 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/timesheet")
+@CrossOrigin(origins = "*")
 public class TimeSheetController {
 
     @Autowired
@@ -53,8 +54,5 @@ public class TimeSheetController {
     public List<Timesheet> getAllByStatus(@PathVariable int status){
         return timesheetService.getTimesheetByStatus(status);
     }
-
-
-
 
 }

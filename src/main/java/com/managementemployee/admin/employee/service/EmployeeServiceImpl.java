@@ -2,6 +2,8 @@ package com.managementemployee.admin.employee.service;
 
 import com.managementemployee.admin.common.exception.InvalidEmailException;
 import com.managementemployee.admin.employee.model.Employee;
+import com.managementemployee.admin.employee.model.EmployeeAvatarOnly;
+import com.managementemployee.admin.employee.model.EmployeeEmailOnly;
 import com.managementemployee.admin.employee.repository.EmployeeRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,5 +77,30 @@ public class EmployeeServiceImpl implements EmployeeService {
       }
        existingEmployee.setAvatar(employee.getAvatar());
       return employeeRepository.save(existingEmployee);
+    }
+
+
+    @Override
+    public Employee updateAvatar(Integer empId, EmployeeAvatarOnly employeeAvatarOnly) {
+
+        Employee employeeExisting = employeeRepository.findById(empId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid emp id" + empId));
+        employeeExisting.setAvatar(employeeAvatarOnly.getAvatar());
+        return employeeRepository.save(employeeExisting);
+    }
+
+    @Override
+    public Employee updateEmail(Integer empId, EmployeeEmailOnly employeeEmailOnly) {
+        Employee employeeExisting = employeeRepository.findById(empId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid emp id" + empId));
+
+        try{
+            employeeExisting.setEmail(employeeEmailOnly.getEmail());
+            return employeeRepository.save(employeeExisting);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
     }
 }
