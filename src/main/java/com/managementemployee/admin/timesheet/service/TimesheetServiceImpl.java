@@ -54,6 +54,7 @@ public class TimesheetServiceImpl implements TimesheetService {
             if(timeInValid(LocalTime.now())){
                 timesheet.setMinusLate(0L);
 
+
             }
             else{
                 DateTimeFormatter dtf = DateTimeFormatter.ofPattern("H:m:s");
@@ -73,9 +74,11 @@ public class TimesheetServiceImpl implements TimesheetService {
 
             System.out.println(duration.toMinutes());
 
-            // gia su check out success neu da lm dc it nhat 1 shift: 4hours
+            // gia su check out success neu da lm dc it nhat 1 shift: 2hours
             // hoac da den gio ve
-            if(duration.toMinutes() > 60 || timeOutValid(LocalTime.now())){
+            if(timesheet.getTimeOut() == null &&
+                    ( duration.toMinutes() > 120 || timeOutValid(LocalTime.now()) )
+            ){
                 timesheet.setTimeOut(LocalDateTime.now());
             }
             else {

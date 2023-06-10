@@ -1,14 +1,12 @@
 package com.managementemployee.admin.timesheet_details.model;
 
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.Subselect;
 
 import java.io.Serializable;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -16,7 +14,7 @@ import java.time.LocalDateTime;
 @Entity
 @Immutable
 @Table(name = "`timesheet_details`")
-@Subselect("select uuid() as id, td.* from timesheet_details as td")
+@Subselect("select uuid() as id, td.* from timesheet_details as td ORDER by time_in DESC")
 public class TimesheetDetailsView implements Serializable {
     @Id
     private String id;
@@ -39,6 +37,10 @@ public class TimesheetDetailsView implements Serializable {
     @Column(name = "minus_late")
     private Long minusLate;
 
+    @Column(name = "total_work")
+    @Transient
+    private Long totalWork;
+
     private Integer empId;
 
     private String avatar;
@@ -47,6 +49,19 @@ public class TimesheetDetailsView implements Serializable {
     private String fullNameEmp;
 
     private String position;
+
+
+    @Column(name = "time_in_string")
+    @Transient
+    private String timeInString;
+
+    @Column(name="time_in_out")
+    @Transient
+    private  String timeOutString;
+
+    @Column(name = "day_off_week")
+    @Transient
+    private String dayOfWeek;
 
 
     public TimesheetDetailsView() {
@@ -106,6 +121,32 @@ public class TimesheetDetailsView implements Serializable {
 
     public String getPosition() {
         return position;
+    }
+
+    public Long getTotalWork() {
+        if(timeIn != null && timeOut!= null){
+            Duration duration = Duration.between(timeIn, timeOut);
+            return duration.toHours();
+        }
+        return null;
+    }
+
+    public String getTimeInString() {
+        if(timeIn != null) {
+            return timeIn.getHour() + ":" + timeIn.getMinute() + ":" + timeIn.getSecond();
+        }
+        return null;
+    }
+
+    public String getTimeOutString() {
+        if(timeOut != null){
+            return timeOut.getHour() + ":" + timeOut.getMinute() + ":" + timeOut.getSecond();
+        }
+        return null;
+    }
+
+    public String getDayOfWeek() {
+        return timeIn.getDayOfWeek().toString();
     }
 
 
