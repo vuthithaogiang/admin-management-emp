@@ -67,7 +67,7 @@ public class TimesheetDetailsViewServiceImpl  implements TimesheetDetailsViewSer
 
     @Override
     public List<TimesheetDetailsView> findAllTimesheetDetailsViewByEmpIdToday(Integer empId) {
-        List<TimesheetDetailsView> list =timesheetDetailsViewRepository.findAll();
+        List<TimesheetDetailsView> list = timesheetDetailsViewRepository.findAll();
 
         List<TimesheetDetailsView> result = new ArrayList<>();
 

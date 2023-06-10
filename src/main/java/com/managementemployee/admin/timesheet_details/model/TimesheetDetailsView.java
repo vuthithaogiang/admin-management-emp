@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Entity
 @Immutable
 @Table(name = "`timesheet_details`")
-@Subselect("select uuid() as id, td.* from timesheet_details as td ORDER by time_in DESC")
+@Subselect("select uuid() as id, td.* from timesheet_details as td ORDER by time_in ASC")
 public class TimesheetDetailsView implements Serializable {
     @Id
     private String id;

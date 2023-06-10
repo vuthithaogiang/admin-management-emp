@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface TimesheetLogService  {
     public List<TimesheetLog> getAll();
+
+    public List<TimesheetLog> getToday();
 }

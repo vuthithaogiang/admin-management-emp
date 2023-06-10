@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.swing.event.ListDataEvent;
 import java.util.List;
 
 @RestController
@@ -20,6 +21,11 @@ public class TimesheetLogController {
     @GetMapping("/getAll")
     public List<TimesheetLog> getAll() {
         return  timesheetLogService.getAll();
+    }
+
+    @GetMapping("/getToday")
+    public List<TimesheetLog> getToday() {
+        return timesheetLogService.getToday();
     }
 
 }
