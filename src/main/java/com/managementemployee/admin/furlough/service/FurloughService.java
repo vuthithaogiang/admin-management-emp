@@ -37,4 +37,6 @@ public interface FurloughService {
     public List<Furlough> acceptListFurlough(List<Furlough> furloughList);
 
     public List<Furlough> denyListFurlough(List<Furlough> furloughList);
+
+    public Furlough updateFurlough(Furlough furlough);
 }

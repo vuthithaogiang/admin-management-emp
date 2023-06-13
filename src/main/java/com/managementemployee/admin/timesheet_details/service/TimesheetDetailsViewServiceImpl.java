@@ -6,6 +6,7 @@ import com.managementemployee.admin.timesheet_details.repository.TimesheetDetail
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.swing.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -76,6 +77,103 @@ public class TimesheetDetailsViewServiceImpl  implements TimesheetDetailsViewSer
 
         for (var item : list){
             if(item.getDateIn().isEqual(today) && item.getEmpId() == empId){
+                result.add(item);
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public List<TimesheetDetailsView> findAllTimesheetDetailsInToday() {
+      LocalDate today = LocalDate.now();
+
+      List <TimesheetDetailsView> result = new ArrayList<>();
+
+      for(var item : timesheetDetailsViewRepository.findAll()){
+          if(item.getDateIn().isEqual(today)){
+              result.add(item);
+          }
+      }
+      return result;
+    }
+
+    @Override
+    public List<TimesheetDetailsView> findAllTimesheetDetailInThisWeek() {
+        LocalDate today = LocalDate.now();
+
+        LocalDate monday = today.with(previousOrSame(MONDAY));
+        LocalDate sunday = today.with(nextOrSame(SUNDAY));
+
+
+        List<TimesheetDetailsView> list = timesheetDetailsViewRepository.findAll();
+
+        List<TimesheetDetailsView> result = new ArrayList<>();
+
+        for(var item : list){
+            if( (item.getDateIn().isAfter(monday) && item.getDateIn().isBefore(sunday)
+                    || item.getDateIn().isEqual(monday) || item.getDateIn().isEqual(sunday))
+                    ){
+                result.add(item);
+            }
+        }
+
+        return result;
+    }
+
+    @Override
+    public List<TimesheetDetailsView> findAllByLastWeek() {
+        LocalDate today = LocalDate.now();
+
+        LocalDate monday = today.with(previousOrSame(MONDAY));
+        LocalDate sunday = today.with(nextOrSame(SUNDAY));
+
+        LocalDate lastWeekMonday = monday.minusDays(7);
+        LocalDate lasWeekSunday = sunday.minusDays(7);
+
+        System.out.println("Today: " + today);
+        System.out.println("Monday of the Week: " + monday);
+        System.out.println("Sunday of the Week: " + sunday);
+        System.out.println("Last Monday" + lastWeekMonday);
+        System.out.println(("Last sunday: " + lasWeekSunday));
+
+        List<TimesheetDetailsView> list = timesheetDetailsViewRepository.findAll();
+
+        List<TimesheetDetailsView> result = new ArrayList<>();
+
+        for(var item : list){
+            if( (item.getDateIn().isAfter(lastWeekMonday) && item.getDateIn().isBefore(lasWeekSunday)
+                    || item.getDateIn().isEqual(lastWeekMonday) || item.getDateIn().isEqual(lasWeekSunday))
+            ){
+                result.add(item);
+            }
+        }
+
+        return result;
+
+    }
+
+
+    @Override
+    public List<TimesheetDetailsView> findAllTimesheetDetailsViewByEmpIdLastWeek(Integer empId){
+        List<TimesheetDetailsView> result = new ArrayList<>();
+
+        List<TimesheetDetailsView> timesheetInLastWeek = findAllByLastWeek();
+
+        for(var item : timesheetInLastWeek){
+            if(item.getEmpId() == empId){
+                result.add(item);
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public List<TimesheetDetailsView> findAllTimesheetDetailsInThisMoth() {
+        List<TimesheetDetailsView> result = new ArrayList<>();
+        LocalDate today = LocalDate.now();
+
+        for(var item : timesheetDetailsViewRepository.findAll()){
+            if(item.getDateIn().getMonth() == today.getMonth()){
                 result.add(item);
             }
         }

@@ -74,10 +74,10 @@ public class TimesheetServiceImpl implements TimesheetService {
 
             System.out.println(duration.toMinutes());
 
-            // gia su check out success neu da lm dc it nhat 1 shift: 2hours
+            // gia su check out success neu da lm dc it nhat 1 shift: 3hours
             // hoac da den gio ve
             if(timesheet.getTimeOut() == null &&
-                    ( duration.toMinutes() > 120 || timeOutValid(LocalTime.now()) )
+                    ( duration.toMinutes() > 60*3 || timeOutValid(LocalTime.now()) )
             ){
                 timesheet.setTimeOut(LocalDateTime.now());
             }

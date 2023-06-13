@@ -99,4 +99,10 @@ public class FurloughController {
    }
 
 
+   @PatchMapping("/update")
+   public Furlough updateFurlough(@RequestBody Furlough furlough){
+        return furloughService.updateFurlough(furlough);
+   }
+
+
 }

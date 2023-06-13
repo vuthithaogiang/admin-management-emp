@@ -19,6 +19,8 @@ public class TimesheetLog {
     private String id;
     private Integer timesheetId;
     private LocalDateTime updateAt;
+
+    private LocalDateTime timeOut;
     private String avatar;
     private String fullNameEmp;
 
@@ -29,6 +31,10 @@ public class TimesheetLog {
     @Transient
      @Column(name = "date_to_string")
     String dateToString;
+
+    @Transient
+    @Column(name ="type")
+    private String type;
 
     public TimesheetLog() {
 
@@ -60,6 +66,19 @@ public class TimesheetLog {
 
     public  String getDateToString() {
         return updateAt.toLocalDate().toString();
+    }
+
+    public LocalDateTime getTimeOut() { return  timeOut;}
+
+    public void setType(String type) { this.type = type;}
+
+    public String getType() {
+        if(timeOut == null){
+            return "check in";
+        }
+        else{
+           return  "check out";
+        }
     }
 
 

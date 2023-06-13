@@ -7,6 +7,7 @@ import com.managementemployee.admin.furlough.repository.FurloughRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.ArrayList;
@@ -38,7 +39,7 @@ public class FurloughServiceImpl implements FurloughService {
 
            System.out.println( "Days: " + days.getDays());
 
-           furlough.setTotalDaysOff(days.getDays());
+           furlough.setTotalDaysOff(days.getDays() +1);
             return furloughRepository.save(furlough);
 
     }
@@ -178,6 +179,20 @@ public class FurloughServiceImpl implements FurloughService {
 
         return furloughRepository.saveAll(furloughsExisting);
 
+
+    }
+
+    @Override
+    public Furlough updateFurlough(Furlough furlough) {
+        Furlough existingFurlough = furloughRepository.findById(furlough.getFurLoughInteger()).orElse(null);
+
+        existingFurlough.setOffFrom(furlough.getOffFrom().toString());
+        existingFurlough.setOffTo(furlough.getOffTo().toString());
+        existingFurlough.setNote(furlough.getNote());
+        var days = Period.between(furlough.getOffFrom(), furlough.getOffTo());
+        existingFurlough.setTotalDaysOff(days.getDays() +1);
+
+        return furloughRepository.save(existingFurlough);
 
     }
 }

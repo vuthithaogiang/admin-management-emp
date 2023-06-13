@@ -21,6 +21,27 @@ public class TimesheetDetailsViewController {
         return timesheetDetailsViewService.findAllTimesheetDetails();
     }
 
+
+    @GetMapping("/getAllToday")
+    public List<TimesheetDetailsView> getAllToday(){
+        return timesheetDetailsViewService.findAllTimesheetDetailsInToday();
+    }
+
+
+    @GetMapping("/getAllThisWeek")
+    public List<TimesheetDetailsView> getAllThisWeek() {
+        return timesheetDetailsViewService.findAllTimesheetDetailInThisWeek();
+    }
+
+
+    @GetMapping("/getAllLastWeek")
+    public List<TimesheetDetailsView> getAllLastWeek() {
+        return timesheetDetailsViewService.findAllByLastWeek();
+    }
+    @GetMapping("/getAllThisMonth")
+    public List<TimesheetDetailsView> getAllThisMonth() {
+        return timesheetDetailsViewService.findAllTimesheetDetailsInThisMoth();
+    }
     @GetMapping("/getAllByEmpId/{empId}")
     public List<TimesheetDetailsView> getAllByEmpId(@PathVariable Integer empId) {
         return timesheetDetailsViewService.findAllTimesheetDetailsByEmpId(empId);
@@ -34,5 +55,10 @@ public class TimesheetDetailsViewController {
     @GetMapping("/getAllByEmpIdToday/{empId}")
     public List<TimesheetDetailsView> getAllByEmpIdToday(@PathVariable Integer empId){
         return timesheetDetailsViewService.findAllTimesheetDetailsViewByEmpIdToday(empId);
+    }
+
+    @GetMapping("/getAllByEmpIdLastWeek/{empId}")
+    public List<TimesheetDetailsView> getAllByEmpIdLastWeek(@PathVariable Integer empId){
+        return timesheetDetailsViewService.findAllTimesheetDetailsViewByEmpIdLastWeek(empId);
     }
 }
