@@ -104,5 +104,9 @@ public class FurloughController {
         return furloughService.updateFurlough(furlough);
    }
 
+   @DeleteMapping("/delete/{furloughId}")
+   public String deleteFurlough(@PathVariable Integer furloughId){
+        return furloughService.deleteFurlough(furloughId);
+   }
 
 }

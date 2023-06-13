@@ -3,6 +3,7 @@ package com.managementemployee.admin.furlough.service;
 import com.managementemployee.admin.furlough.model.Furlough;
 
 
+
 import java.time.LocalDate;
 import java.util.List;
 
@@ -39,4 +40,6 @@ public interface FurloughService {
     public List<Furlough> denyListFurlough(List<Furlough> furloughList);
 
     public Furlough updateFurlough(Furlough furlough);
+
+    public String deleteFurlough(Integer furloughId);
 }

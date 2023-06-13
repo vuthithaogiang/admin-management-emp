@@ -195,4 +195,17 @@ public class FurloughServiceImpl implements FurloughService {
         return furloughRepository.save(existingFurlough);
 
     }
+
+    @Override
+    public String deleteFurlough(Integer furloughId) {
+        Furlough furloughExisting = furloughRepository.findById(furloughId).orElse(null);
+
+        if(furloughExisting == null){
+            return  null;
+        }
+        else{
+            furloughRepository.deleteById(furloughId);
+            return "Delete complete";
+        }
+    }
 }
