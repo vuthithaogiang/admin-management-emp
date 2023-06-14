@@ -1,9 +1,11 @@
 package com.managementemployee.admin.employee.controller;
 
 import com.managementemployee.admin.common.exception.InvalidEmailException;
+import com.managementemployee.admin.common.exception.InvalidPasswordException;
 import com.managementemployee.admin.employee.model.Employee;
 import com.managementemployee.admin.employee.model.EmployeeAvatarOnly;
 import com.managementemployee.admin.employee.model.EmployeeEmailOnly;
+import com.managementemployee.admin.employee.model.EmployeeLogin;
 import com.managementemployee.admin.employee.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -18,11 +20,25 @@ public class EmployeeController {
     private EmployeeService employeeService;
 
     @PostMapping("/add")
-    public String add(@RequestBody Employee employee){
+    public String add(@RequestBody Employee employee) {
         employeeService.saveEmployee(employee);
         return "New employee is added!";
     }
+    @PostMapping("/auth")
+    public String authenticatedEmployee (@RequestBody EmployeeLogin employee){
+        return employeeService.authenticateEmployee(employee);
+    }
 
+
+    @PostMapping("/authAdmin")
+    public String authenticateEmployeeAdmin(@RequestBody EmployeeLogin employeeLogin){
+        return employeeService.authenticateEmployeeAdmin(employeeLogin);
+    }
+
+    @PostMapping("/setDefaultPassword")
+    public String setDefaultPassWord() throws InvalidPasswordException {
+        return employeeService.setDefaultPassWord();
+    }
 
     @GetMapping("/getAll")
     public List<Employee> getAllEmployees() {

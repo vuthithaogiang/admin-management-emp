@@ -4,11 +4,16 @@ package com.managementemployee.admin.employee.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.managementemployee.admin.common.entity.BaseEntity;
 import com.managementemployee.admin.common.exception.InvalidEmailException;
+import com.managementemployee.admin.common.exception.InvalidPasswordException;
 import com.managementemployee.admin.common.exception.InvalidSalaryException;
 import com.managementemployee.admin.furlough.model.Furlough;
 import com.managementemployee.admin.timesheet.model.Timesheet;
 import jakarta.persistence.*;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+
+import java.net.PasswordAuthentication;
+import java.rmi.MarshalException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -32,8 +37,13 @@ public class Employee extends BaseEntity {
     @Column(name = "last_name", nullable = false)
     private String lastName;
 
-    @Column (name = "email", nullable = false)
+    @Column (name = "email", nullable = false, unique = true)
     private String email;
+
+    @Column(name = "password", nullable = false)
+    private String password;
+
+
 
     @Column (name = "avatar")
     private String avatar;
@@ -49,6 +59,9 @@ public class Employee extends BaseEntity {
     private float salary;
 
     private String status ;
+
+    @Column(name = "type_of_employee", nullable = false)
+    private String typeOfEmployee;
 
     @Transient
     private String fullName;
@@ -127,6 +140,49 @@ public class Employee extends BaseEntity {
 
     }
 
+    public String getPassword() {
+        return this.password;
+    }
+
+    public void setPassword(String password) throws InvalidPasswordException{
+        var regex = "^(.){6,}$"; // toi thieu 6 ki tu
+        var regex2 = "^.*[a-z]+.*$"; // gom chu cai thuong
+        var regex3 = "^.*[A-Z]+.*$"; // gom chu  cai hoa
+        var regex4 = "^.*[0-9]+.*$"; // gom so
+        var regex5 = "^.*[~!@#$%^&*]+.*$"; // gom ki tu dac biet
+        var regex6 = email; // khong trung voi email
+
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(password);
+
+        Pattern pattern2 = Pattern.compile(regex2);
+        Matcher matcher2 = pattern2.matcher(password);
+
+        Pattern pattern3 = Pattern.compile(regex3);
+        Matcher matcher3 = pattern3.matcher(password);
+
+        Pattern pattern4 = Pattern.compile(regex4);
+        Matcher matcher4 = pattern4.matcher(password);
+
+        Pattern pattern5 = Pattern.compile(regex5);
+        Matcher matcher5 = pattern5.matcher(password);
+
+        Pattern pattern6 = Pattern.compile(regex6, Pattern.CASE_INSENSITIVE);
+        Matcher matcher6 = pattern6.matcher(password);
+
+        if(matcher.matches() && matcher3.matches() && matcher2.matches()
+        &&  matcher4.matches() && matcher5.matches() && !matcher6.matches()){
+            BCryptPasswordEncoder bcrypt = new BCryptPasswordEncoder();
+            String encryptedPassword  = bcrypt.encode(password);
+            this.password = encryptedPassword;
+        }
+        else{
+            this.password = null;
+            var msg = "Password is invalid!";
+            throw  new InvalidPasswordException(msg, password);
+        }
+    }
+
     public String getAvatar() {
         return this.avatar;
     }
@@ -174,5 +230,9 @@ public class Employee extends BaseEntity {
             throw new InvalidSalaryException(msg, salary);
         }
     }
+
+    public String getTypeOfEmployee() { return typeOfEmployee;}
+
+    public void setTypeOfEmployee(String typeOfEmployee) { this.typeOfEmployee = typeOfEmployee;}
 }
 
