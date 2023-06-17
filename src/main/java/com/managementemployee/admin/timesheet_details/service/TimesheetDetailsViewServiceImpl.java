@@ -1,6 +1,7 @@
 package com.managementemployee.admin.timesheet_details.service;
 
 
+import com.managementemployee.admin.common.entity.DateDefinition;
 import com.managementemployee.admin.timesheet_details.model.TimesheetDetailsView;
 import com.managementemployee.admin.timesheet_details.repository.TimesheetDetailsViewRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -174,6 +175,33 @@ public class TimesheetDetailsViewServiceImpl  implements TimesheetDetailsViewSer
 
         for(var item : timesheetDetailsViewRepository.findAll()){
             if(item.getDateIn().getMonth() == today.getMonth()){
+                result.add(item);
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public List<TimesheetDetailsView> findAllTimeSheetDetailsViewFromDateToOtherDate
+            (DateDefinition date) {
+        List<TimesheetDetailsView> result = new ArrayList<>();
+        for(var item : timesheetDetailsViewRepository.findAll()) {
+            if(item.getDateIn().isAfter(date.getDateFrom()) && item.getDateIn().isBefore(date.getDateTo())
+                    || item.getDateIn().isEqual(date.getDateFrom()) || item.getDateIn().isEqual(date.getDateTo())){
+                result.add(item);
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public List<TimesheetDetailsView> findAllTimesheetDetailsViewByEmpIdFromDateToOtherDate(DateDefinition date ,
+                                                                                            Integer empId) {
+        List<TimesheetDetailsView> result = new ArrayList<>();
+        for(var item : timesheetDetailsViewRepository.findAll()) {
+            if((item.getDateIn().isAfter(date.getDateFrom()) && item.getDateIn().isBefore(date.getDateTo())
+                    || item.getDateIn().isEqual(date.getDateFrom()) || item.getDateIn().isEqual(date.getDateTo()))
+            && item.getEmpId() == empId){
                 result.add(item);
             }
         }

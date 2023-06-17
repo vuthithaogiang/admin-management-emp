@@ -24,6 +24,8 @@ public class TimesheetLog {
     private String avatar;
     private String fullNameEmp;
 
+    private String firstName;
+
     @Transient
     @Column(name = "time_to_string")
     private String timeToString;
@@ -55,6 +57,8 @@ public class TimesheetLog {
     public String getFullNameEmp() {
         return fullNameEmp;
     }
+
+    public String getFirstName() { return firstName;}
 
     public String getAvatar(){
         return avatar;

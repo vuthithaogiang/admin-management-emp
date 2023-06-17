@@ -45,6 +45,8 @@ public class TimesheetDetailsView implements Serializable {
 
     private String avatar;
 
+    private String firstName;
+
     @Column(name = "full_name_emp")
     private String fullNameEmp;
 
@@ -149,5 +151,5 @@ public class TimesheetDetailsView implements Serializable {
         return timeIn.getDayOfWeek().toString();
     }
 
-
+     public String getFirstName() { return firstName;}
 }

@@ -45,7 +45,7 @@ public class TimeSheetController {
 
     }
 
-    @GetMapping("getAllByDate/{empId}")
+    @GetMapping("getAllToday/{empId}")
     public Timesheet getAllByEmpIdAndToday(@PathVariable int empId){
         return timesheetService.getTimesheetByEmployeeIdAndDateNow(empId);
     }

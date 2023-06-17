@@ -1,5 +1,6 @@
 package com.managementemployee.admin.timesheet_details.service;
 
+import com.managementemployee.admin.common.entity.DateDefinition;
 import com.managementemployee.admin.timesheet_details.model.TimesheetDetailsView;
 
 import java.util.List;
@@ -24,5 +25,11 @@ public interface TimesheetDetailsViewService {
 
     public List<TimesheetDetailsView> findAllTimesheetDetailsViewByEmpIdToday(Integer empId);
 
+    public List<TimesheetDetailsView>
+    findAllTimeSheetDetailsViewFromDateToOtherDate(DateDefinition date);
+
+
+    public List<TimesheetDetailsView> findAllTimesheetDetailsViewByEmpIdFromDateToOtherDate(DateDefinition date,
+                                                                                            Integer empId);
 
 }
