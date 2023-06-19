@@ -1,6 +1,7 @@
 package com.managementemployee.admin.common.entity;
 
 import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.Transient;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -15,6 +16,9 @@ public abstract class BaseEntity implements Cloneable, Serializable {
 
     @UpdateTimestamp
     private LocalDateTime updateAt;
+
+    @Transient
+    private String updateAtInString;
 
     @Override
     public String toString() {
@@ -35,6 +39,10 @@ public abstract class BaseEntity implements Cloneable, Serializable {
 
     public LocalDateTime getUpdateAt() {
         return updateAt;
+    }
+
+    public String getUpdateAtInString() {
+        return updateAt.getHour() + ":" + updateAt.getMinute();
     }
 
     public void setUpdateAt(LocalDateTime updateAt) {

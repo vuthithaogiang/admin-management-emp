@@ -55,4 +55,26 @@ public class TimeSheetController {
         return timesheetService.getTimesheetByStatus(status);
     }
 
+    @PostMapping("/saveToTrash/{timesheetId}")
+    public Timesheet saveToTrash(@PathVariable Integer timesheetId){
+        return timesheetService.saveToTrash(timesheetId);
+    }
+
+
+    @PostMapping("/restoreFromTrash/{timesheetId}")
+    public Timesheet restoreFromTrash(@PathVariable Integer timesheetId){
+        return timesheetService.toRestoreFromTrash(timesheetId);
+    }
+
+
+    @GetMapping("/getAllInTrash")
+    public List<Timesheet> getAllInTrash() {
+        return timesheetService.getAllInTrash();
+    }
+
+    @PutMapping("/edit")
+    public Timesheet editTimesheet(@RequestBody Timesheet timesheet){
+        return timesheetService.editTimesheet(timesheet);
+    }
+
 }

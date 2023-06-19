@@ -13,6 +13,7 @@ public interface TimesheetService {
 
     public List<Timesheet> getAllTimesheet();
 
+    public List<Timesheet> getAllInTrash();
 
     public List<Timesheet> getTimesheetByEmployeeId(int empId) ;
 
@@ -21,5 +22,13 @@ public interface TimesheetService {
     public List<Timesheet> getTimesheetByStatus(int status);
 
     public List<Timesheet> saveDefaultEmpAcceptedFurloughAbsent();
+
+    public Timesheet saveToTrash(Integer timesheetId);
+
+    public Timesheet toRestoreFromTrash(Integer timesheetId);
+
+    public String deleteTimesheet(Integer timesheetId);
+
+    public Timesheet editTimesheet(Timesheet timesheet);
 
 }

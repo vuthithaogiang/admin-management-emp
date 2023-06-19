@@ -1,6 +1,7 @@
 package com.managementemployee.admin.timesheet.model;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.managementemployee.admin.common.entity.BaseEntity;
 import com.managementemployee.admin.employee.model.Employee;
 import jakarta.persistence.*;
@@ -28,13 +29,18 @@ public class Timesheet extends BaseEntity {
     private LocalDate dateIn;
 
     @Column(name = "time_in")
+    @JsonFormat(pattern = "yyyy-MM-dd H:m:s", shape = JsonFormat.Shape.STRING)
     private LocalDateTime timeIn;
 
     @Column(name = "time_out")
+    @JsonFormat(pattern = "yyyy-MM-dd H:m:s", shape = JsonFormat.Shape.STRING)
     private LocalDateTime timeOut;
 
     @Column(columnDefinition = "TINYINT(1)")
     private Integer status;
+
+    @Column (columnDefinition = "TINYiNT(1)")
+    private Integer trash;
 
     @Transient
     private Long totalHourWork;
@@ -54,6 +60,20 @@ public class Timesheet extends BaseEntity {
 
 
     private Long minusLate;
+
+    @Transient
+    private String monthInString;
+
+    @Transient
+    private Integer dayOfMonth;
+
+
+    @Column(name = "day_off_week")
+    @Transient
+    private String dayOfWeek;
+
+
+
 
 
 
@@ -80,8 +100,8 @@ public class Timesheet extends BaseEntity {
 
 
 
-    public String getTimesheetId() {
-        return "TIMES" + this.timesheetId;
+    public Integer getTimesheetId() {
+        return timesheetId;
     }
 
     public Integer getStatus() {
@@ -144,4 +164,28 @@ public class Timesheet extends BaseEntity {
     public void setMinusLate(Long minusLate){
         this.minusLate = minusLate;
     }
+
+    public String getMonthInString() {
+        String months[] = {"January", "February", "March", "April",
+                "May", "June", "July", "August", "September",
+                "October", "November", "December"};
+
+        int monthIndex = dateIn.getMonthValue();
+
+        return months[monthIndex -1];
+    }
+
+    public Integer getDayOfMonth() {
+        return dateIn.getDayOfMonth();
+    }
+
+    public Integer getTrash() { return trash;}
+
+    public void setTrash(Integer trash) {  this.trash = trash;}
+
+    public String getDayOfWeek() {
+        return timeIn.getDayOfWeek().toString();
+    }
+
+
 }

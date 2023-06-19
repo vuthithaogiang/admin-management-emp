@@ -66,6 +66,13 @@ public class TimesheetDetailsView implements Serializable {
     private String dayOfWeek;
 
 
+    @Transient
+    private String monthInString;
+
+    @Transient
+    private Integer dayOfMonth;
+
+
     public TimesheetDetailsView() {
 
     }
@@ -152,4 +159,18 @@ public class TimesheetDetailsView implements Serializable {
     }
 
      public String getFirstName() { return firstName;}
+
+    public String getMonthInString() {
+        String months[] = {"January", "February", "March", "April",
+                "May", "June", "July", "August", "September",
+                "October", "November", "December"};
+
+        int monthIndex = dateIn.getMonthValue();
+
+        return months[monthIndex -1];
+    }
+
+    public Integer getDayOfMonth() {
+        return dateIn.getDayOfMonth();
+    }
 }

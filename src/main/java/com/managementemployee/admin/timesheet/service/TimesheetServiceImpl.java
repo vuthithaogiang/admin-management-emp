@@ -30,6 +30,77 @@ public class TimesheetServiceImpl implements TimesheetService {
     @Autowired
     private FurloughRepository furloughRepository;
 
+    @Override
+    public Timesheet saveToTrash(Integer timesheetId) {
+       Timesheet timesheet = timesheetRepository.findById(timesheetId).orElse(null);
+
+       if(timesheet == null){
+           return null;
+       }
+       else{
+           timesheet.setTrash(1);
+           return timesheetRepository.save(timesheet);
+       }
+    }
+
+    @Override
+    public Timesheet toRestoreFromTrash(Integer timesheetId) {
+       Timesheet timesheet = timesheetRepository.findById(timesheetId).orElse(null);
+
+       if(timesheet == null){
+           return null;
+       }
+       else{
+           timesheet.setTrash(0);
+           return timesheetRepository.save(timesheet);
+       }
+
+    }
+
+
+    @Override
+    public List<Timesheet> getAllInTrash(){
+        return timesheetRepository.findAllByTrash(1);
+    }
+
+    @Override
+    public Timesheet editTimesheet(Timesheet timesheet){
+        Timesheet timesheetExisting = timesheetRepository.findById(timesheet.getTimesheetId()).orElse(null);
+
+        if(timesheetExisting == null) {
+            return null;
+        }
+        else{
+            if(timesheetExisting.getTrash() == 1){
+                return null;
+            }
+            else{
+
+                timesheetExisting.setTimeIn(timesheet.getTimeIn());
+                timesheetExisting.setTimeOut(timesheet.getTimeOut());
+
+
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("H:m:s");
+                LocalTime time = LocalTime.parse("8:30:00", dtf);
+
+                if(Duration.between(time , timesheet.getTimeIn().toLocalTime() ).toMinutes() <= 0){
+                    timesheetExisting.setMinusLate(0L);
+                }
+                else{
+                    timesheetExisting.setMinusLate(Duration.between(time ,
+                            timesheet.getTimeIn().toLocalTime() ).toMinutes());
+                }
+
+
+                return timesheetRepository.save(timesheetExisting);
+            }
+        }
+    }
+
+    @Override
+    public String deleteTimesheet(Integer timesheetId) {
+        return null;
+    }
 
     @Override
     public Timesheet saveTimesheet( int empId) {
@@ -39,8 +110,9 @@ public class TimesheetServiceImpl implements TimesheetService {
        int sizeOfEmpPresent = getTimesheetByEmployeeId(empId).size();
        var EmpPresentToday = getTimesheetByEmployeeIdAndDateNow(empId);
 
-        //chưa có ất kì nhân viên nào
+        // chưa có ất kì nhân viên nào
         // hoặc hôm nay chưa có nhân viên nào check in
+        // NEW RECORD
         if(sizeOfEmpPresent == 0 || EmpPresentToday == null) {
             Employee employee = employeeRepository.findById(empId)
                     .orElseThrow(() -> new IllegalArgumentException("Employee not found with ID: " + empId));
@@ -50,11 +122,10 @@ public class TimesheetServiceImpl implements TimesheetService {
             timesheet.setEmployee(employee);
             //timesheet.setDateIn(LocalDate.now());
             timesheet.setTimeIn(LocalDateTime.now());
+            timesheet.setTrash(0);
 
             if(timeInValid(LocalTime.now())){
                 timesheet.setMinusLate(0L);
-
-
             }
             else{
                 DateTimeFormatter dtf = DateTimeFormatter.ofPattern("H:m:s");
@@ -68,6 +139,7 @@ public class TimesheetServiceImpl implements TimesheetService {
             return timesheetRepository.save(timesheet);
 
         }
+        // CHECK TIME OUT VALID ?
         else{
             Timesheet timesheet = getTimesheetByEmployeeIdAndDateNow(empId);
             Duration duration = Duration.between( timesheet.getTimeIn(), LocalDateTime.now());
@@ -95,7 +167,8 @@ public class TimesheetServiceImpl implements TimesheetService {
     }
     @Override
     public List<Timesheet> getAllTimesheet() {
-        return timesheetRepository.findAll();
+
+        return timesheetRepository.findAllByTrash(0);
     }
 
     @Override
@@ -103,16 +176,26 @@ public class TimesheetServiceImpl implements TimesheetService {
         Employee employee = employeeRepository.findById(empId)
                 .orElseThrow(() -> new IllegalArgumentException("Employee not found with ID: " + empId));
 
-        return timesheetRepository.findByEmployee(employee);
+         List<Timesheet> list = timesheetRepository.findByEmployee(employee);
+         List<Timesheet> result = new ArrayList<>();
+
+         for(var item : list){
+             if(item.getTrash() == 0){
+                 result.add(item);
+             }
+         }
+
+         return result;
+
     }
 
     @Override
     public Timesheet getTimesheetByEmployeeIdAndDateNow(int empId) {
         List<Timesheet> timesheetList  = getTimesheetByEmployeeId(empId);
 
-        if(timesheetList.size() > 0 ){
+        if(timesheetList.size() > 0  ){
             for(var item: timesheetList){
-                if(item.getDateIn().isEqual(LocalDate.now())){
+                if(item.getDateIn().isEqual(LocalDate.now()) && item.getTrash() == 0){
                     return item;
                 }
             }
@@ -122,7 +205,15 @@ public class TimesheetServiceImpl implements TimesheetService {
 
     @Override
     public List<Timesheet> getTimesheetByStatus(int status){
-        return timesheetRepository.findAllByStatus(status);
+        List<Timesheet> result = new ArrayList<>();
+
+        for(var item : timesheetRepository.findAll()){
+            if(item.getStatus() == status && item.getTrash() == 0){
+                result.add(item);
+            }
+        }
+
+        return result;
     }
 
     @Override
@@ -133,8 +224,10 @@ public class TimesheetServiceImpl implements TimesheetService {
         List<Employee> employeeList = new ArrayList<>();
 
         for(var item : furloughRepository.findByStatus(1)) {
-            if(date.isBefore(item.getOffTo()) && date.isAfter(item.getOffFrom())
-                    | date.isEqual(item.getOffTo()) | date.isEqual(item.getOffFrom())){
+            if( date.isBefore(item.getOffTo()) && date.isAfter(item.getOffFrom() )
+                    | date.isEqual(item.getOffTo()) | date.isEqual(item.getOffFrom()))
+
+            {
                 employeeList.add(item.getEmployee());
             }
         }

@@ -17,4 +17,6 @@ public interface TimesheetRepository extends JpaRepository<Timesheet, Integer> {
 
     List<Timesheet> findAllByStatus(int status);
 
+    List <Timesheet> findAllByTrash(int trash);
+
 }
