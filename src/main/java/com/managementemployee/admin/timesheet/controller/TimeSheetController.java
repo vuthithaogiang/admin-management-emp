@@ -1,5 +1,7 @@
 package com.managementemployee.admin.timesheet.controller;
 
+import com.managementemployee.admin.common.exception.InvalidTimeInException;
+import com.managementemployee.admin.common.exception.InvalidTimeOutException;
 import com.managementemployee.admin.timesheet.model.Timesheet;
 import com.managementemployee.admin.timesheet.service.TimesheetService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +26,7 @@ public class TimeSheetController {
     //timesheet?empId={number}
     @PostMapping
     public ResponseEntity<Timesheet> addTimesheet(
-            @RequestParam int empId) {
+            @RequestParam int empId) throws InvalidTimeInException, InvalidTimeOutException {
         Timesheet timesheet = timesheetService.saveTimesheet(empId);
         return new ResponseEntity<>(timesheet, HttpStatus.CREATED);
     }

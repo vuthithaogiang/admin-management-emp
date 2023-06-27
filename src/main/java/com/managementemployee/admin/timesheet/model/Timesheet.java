@@ -3,6 +3,8 @@ package com.managementemployee.admin.timesheet.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.managementemployee.admin.common.entity.BaseEntity;
+import com.managementemployee.admin.common.exception.InvalidTimeInException;
+import com.managementemployee.admin.common.exception.InvalidTimeOutException;
 import com.managementemployee.admin.employee.model.Employee;
 import jakarta.persistence.*;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -11,6 +13,8 @@ import org.springframework.validation.annotation.Validated;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
@@ -72,11 +76,6 @@ public class Timesheet extends BaseEntity {
     @Transient
     private String dayOfWeek;
 
-
-
-
-
-
     public Timesheet() {
          this.sequence = 1;
 
@@ -96,8 +95,6 @@ public class Timesheet extends BaseEntity {
             dateIn = LocalDate.now();
         }
     }
-
-
 
 
     public Integer getTimesheetId() {
@@ -131,16 +128,37 @@ public class Timesheet extends BaseEntity {
         return timeOut;
     }
 
-    public void setTimeOut(LocalDateTime timeOut) {
-        this.timeOut = timeOut;
+    public void setTimeOut(LocalDateTime timeOut) throws InvalidTimeOutException {
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("H:m:s");
+        LocalTime timeOutBeginValid = LocalTime.parse("19:00:00", dtf);
+        if(timeOut.toLocalTime().isBefore(timeOutBeginValid)
+                | timeOut.toLocalTime().equals(timeOutBeginValid)
+        ){
+            this.timeOut = timeOut;
+        }
+        else{
+            String message = "Invalid time out!";
+            throw new InvalidTimeOutException(message, timeOut.toLocalTime());
+        }
     }
 
     public LocalDateTime getTimeIn() {
         return timeIn;
     }
 
-    public void setTimeIn(LocalDateTime timeIn) {
-        this.timeIn = timeIn;
+    public void setTimeIn(LocalDateTime timeIn) throws InvalidTimeInException {
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("H:m:s");
+
+        LocalTime timeInBeginValid = LocalTime.parse("7:59:00", dtf);
+        LocalTime timeEndBeginValid = LocalTime.parse("18:00:00", dtf);
+
+        if( timeIn.toLocalTime().isAfter(timeInBeginValid) && timeIn.toLocalTime().isBefore(timeEndBeginValid)){
+            this.timeIn = timeIn;
+        }
+        else{
+            String message = "Invalid time in!";
+            throw new InvalidTimeInException(message, timeIn.toLocalTime());
+        }
     }
 
     public LocalDate getDateIn() {

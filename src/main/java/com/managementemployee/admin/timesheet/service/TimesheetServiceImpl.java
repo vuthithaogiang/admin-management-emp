@@ -1,5 +1,7 @@
 package com.managementemployee.admin.timesheet.service;
 
+import com.managementemployee.admin.common.exception.InvalidTimeInException;
+import com.managementemployee.admin.common.exception.InvalidTimeOutException;
 import com.managementemployee.admin.employee.model.Employee;
 import com.managementemployee.admin.employee.repository.EmployeeRepository;
 import com.managementemployee.admin.furlough.repository.FurloughRepository;
@@ -29,6 +31,11 @@ public class TimesheetServiceImpl implements TimesheetService {
 
     @Autowired
     private FurloughRepository furloughRepository;
+
+    @Override
+    public List<Timesheet> getAllTimesheet() {
+        return timesheetRepository.findAll();
+    }
 
     @Override
     public Timesheet saveToTrash(Integer timesheetId) {
@@ -75,24 +82,15 @@ public class TimesheetServiceImpl implements TimesheetService {
                 return null;
             }
             else{
-
-                timesheetExisting.setTimeIn(timesheet.getTimeIn());
-                timesheetExisting.setTimeOut(timesheet.getTimeOut());
-
-
-                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("H:m:s");
-                LocalTime time = LocalTime.parse("8:30:00", dtf);
-
-                if(Duration.between(time , timesheet.getTimeIn().toLocalTime() ).toMinutes() <= 0){
-                    timesheetExisting.setMinusLate(0L);
+                try{
+                    timesheetExisting.setTimeIn(timesheet.getTimeIn());
+                    timesheetExisting.setTimeOut(timesheet.getTimeOut());
+                    return timesheetRepository.save(timesheetExisting);
                 }
-                else{
-                    timesheetExisting.setMinusLate(Duration.between(time ,
-                            timesheet.getTimeIn().toLocalTime() ).toMinutes());
+                catch (Exception e) {
+                    return null;
                 }
 
-
-                return timesheetRepository.save(timesheetExisting);
             }
         }
     }
@@ -102,74 +100,69 @@ public class TimesheetServiceImpl implements TimesheetService {
         return null;
     }
 
+
     @Override
-    public Timesheet saveTimesheet( int empId) {
-
+    public Timesheet saveTimesheet(int empId) throws InvalidTimeOutException, InvalidTimeInException {
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("H:m:s");
+        LocalTime timeInEndValid = LocalTime.parse("8:31:00", dtf);
         var presentTime = LocalTime.now();
+        int sizeOfEmpPresent = getTimesheetByEmployeeId(empId).size();
+        var EmpPresentToday = getTimesheetByEmployeeIdAndDateNow(empId);
 
-       int sizeOfEmpPresent = getTimesheetByEmployeeId(empId).size();
-       var EmpPresentToday = getTimesheetByEmployeeIdAndDateNow(empId);
+        if(sizeOfEmpPresent == 0 | EmpPresentToday == null){
+            try{
+                Employee employee = employeeRepository.findById(empId)
+                        .orElseThrow(() -> new IllegalArgumentException("Employee not found with ID:" + empId));
 
-        // chưa có ất kì nhân viên nào
-        // hoặc hôm nay chưa có nhân viên nào check in
-        // NEW RECORD
-        if(sizeOfEmpPresent == 0 || EmpPresentToday == null) {
-            Employee employee = employeeRepository.findById(empId)
-                    .orElseThrow(() -> new IllegalArgumentException("Employee not found with ID: " + empId));
+                Timesheet timesheet = new Timesheet();
+                timesheet.setEmployee(employee);
+                timesheet.setTimeIn(LocalDateTime.now());
+                timesheet.setTrash(0);
 
-
-            Timesheet timesheet = new Timesheet();
-            timesheet.setEmployee(employee);
-            //timesheet.setDateIn(LocalDate.now());
-            timesheet.setTimeIn(LocalDateTime.now());
-            timesheet.setTrash(0);
-
-            if(timeInValid(LocalTime.now())){
-                timesheet.setMinusLate(0L);
+                if(presentTime.isBefore(timeInEndValid)){
+                    timesheet.setMinusLate(0L);
+                }
+                else{
+                    timesheet.setMinusLate(Duration.between(timeInEndValid, presentTime).toMinutes());
+                }
+                timesheet.setStatus(1);
+                return timesheetRepository.save(timesheet);
             }
-            else{
-                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("H:m:s");
-                LocalTime time = LocalTime.parse("8:30:00", dtf);
-                timesheet.setMinusLate(Duration.between(time, LocalTime.now()).toMinutes());
-                System.out.println(Duration.between(time, LocalTime.now()).toMinutes());
-
+            catch (InvalidTimeInException e){
+             String message = "Invalid time in!";
+             throw new  InvalidTimeInException(message, presentTime);
             }
-
-            timesheet.setStatus(1);
-            return timesheetRepository.save(timesheet);
 
         }
-        // CHECK TIME OUT VALID ?
         else{
             Timesheet timesheet = getTimesheetByEmployeeIdAndDateNow(empId);
             Duration duration = Duration.between( timesheet.getTimeIn(), LocalDateTime.now());
 
             System.out.println(duration.toMinutes());
 
-            // gia su check out success neu da lm dc it nhat 1 shift: 3hours
-            // hoac da den gio ve
-            if(timesheet.getTimeOut() == null &&
-                    ( duration.toMinutes() > 60*3 || timeOutValid(LocalTime.now()) )
-            ){
-                timesheet.setTimeOut(LocalDateTime.now());
+            if(timesheet.getTimeOut() == null && ( duration.toMinutes() >= 60*3 )){
+                try{
+                    timesheet.setTimeOut(LocalDateTime.now());
+                    return timesheetRepository.save(timesheet);
+                }
+                catch (InvalidTimeOutException e){
+                    String message = "Invalid time out!";
+                    throw new InvalidTimeOutException(message, presentTime);
+
+                }
             }
             else {
                 if(timesheet.getSequence() < 5) {
                     timesheet.setSequence(timesheet.getSequence() + 1);
+
                 }
+                return timesheetRepository.save(timesheet);
             }
 
-
-            return timesheetRepository.save(timesheet);
         }
-
-
     }
-    @Override
-    public List<Timesheet> getAllTimesheet() {
 
-        return timesheetRepository.findAllByTrash(0);
-    }
+
 
     @Override
     public List<Timesheet> getTimesheetByEmployeeId(int empId) {
