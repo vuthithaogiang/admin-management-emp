@@ -71,6 +71,11 @@ public class TimesheetServiceImpl implements TimesheetService {
     }
 
     @Override
+    public List<Timesheet> getAllByEmpIdAndMonth(Integer empId, Integer month) {
+        return timesheetRepository.findAllByEmpIdAndMoth(empId, month);
+    }
+
+    @Override
     public Timesheet editTimesheet(Timesheet timesheet){
         Timesheet timesheetExisting = timesheetRepository.findById(timesheet.getTimesheetId()).orElse(null);
 

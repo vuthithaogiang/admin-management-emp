@@ -17,6 +17,8 @@ public interface FurloughService {
 
     public Furlough getById(Integer fId);
 
+    public List<Furlough> getAllByEmpIdAndMonth(Integer empId, Integer month);
+
     public List<Furlough> getAllByOffFrom(LocalDate offFrom);
 
     public List<Furlough> getAllByOffTo(LocalDate  offTo);

@@ -44,6 +44,11 @@ public class FurloughServiceImpl implements FurloughService {
     }
 
     @Override
+    public List<Furlough> getAllByEmpIdAndMonth(Integer empId, Integer month) {
+        return furloughRepository.findAllByEmpIdAndMonth(empId, month);
+    }
+
+    @Override
     public List<Furlough> getAllFurlough() {
         return furloughRepository.findAll();
     }

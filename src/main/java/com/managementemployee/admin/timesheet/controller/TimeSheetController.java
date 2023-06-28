@@ -36,6 +36,11 @@ public class TimeSheetController {
         return timesheetService.saveDefaultEmpAcceptedFurloughAbsent();
     }
 
+
+    @GetMapping("/getByEmpIdAndMonth/empId={empId}&month={month}")
+    public List<Timesheet> getAllByEmpIdAndMonth(@PathVariable Integer empId, @PathVariable Integer month){
+        return timesheetService.getAllByEmpIdAndMonth(empId, month);
+    }
     @GetMapping("/getAll")
     public List<Timesheet> getAllTimesheet(){
         return timesheetService.getAllTimesheet();

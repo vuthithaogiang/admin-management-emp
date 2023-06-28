@@ -2,7 +2,6 @@ package com.managementemployee.admin.timesheet.service;
 
 import com.managementemployee.admin.common.exception.InvalidTimeInException;
 import com.managementemployee.admin.common.exception.InvalidTimeOutException;
-import com.managementemployee.admin.employee.model.Employee;
 import com.managementemployee.admin.timesheet.model.Timesheet;
 
 
@@ -32,5 +31,7 @@ public interface TimesheetService {
     public String deleteTimesheet(Integer timesheetId);
 
     public Timesheet editTimesheet(Timesheet timesheet);
+
+    public List<Timesheet> getAllByEmpIdAndMonth(Integer empId, Integer month);
 
 }

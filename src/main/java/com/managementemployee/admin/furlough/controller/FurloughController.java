@@ -67,9 +67,14 @@ public class FurloughController {
         return  furloughService.getAllByEmpAcceptedFurlough();
     }
 
-    @GetMapping("getAllDenied")
+    @GetMapping("/getAllDenied")
     public List<Furlough> getAllByDeniedFurlough( ) {
         return furloughService.getAllEmpByDeniedFurlough();
+    }
+
+    @GetMapping("/getAllByEmpIdAndMonth/empId={empId}&month={month}")
+    public List<Furlough> getAllByEmpIdAndMonth(@PathVariable Integer empId, @PathVariable Integer month ){
+        return furloughService.getAllByEmpIdAndMonth(empId, month);
     }
 
     @GetMapping("/getAllByEmpAcceptedToday")
