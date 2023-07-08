@@ -2,8 +2,6 @@ package com.managementemployee.admin.stats.model;
 
 import com.managementemployee.admin.common.entity.BaseEntity;
 import jakarta.persistence.*;
-import org.hibernate.annotations.Immutable;
-import org.hibernate.annotations.Subselect;
 
 
 @Entity

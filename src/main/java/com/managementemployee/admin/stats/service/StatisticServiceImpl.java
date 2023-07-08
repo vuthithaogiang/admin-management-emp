@@ -11,7 +11,6 @@ import com.managementemployee.admin.timesheet.repository.TimesheetRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.Duration;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.YearMonth;
@@ -36,11 +35,22 @@ public class StatisticServiceImpl implements  StatisticService{
     private static final String DATE_PATTERN = "M/yyyy";
 
     @Override
-    public List<Statistic> getAllByMonth(Integer month) {
+    public List<Statistic> getAllByMonth(Integer month)  {
        List<Statistic> result = new ArrayList<>();
-       for(var e : employeeRepository.findAll()){
-           Statistic statistic = getAllByEmpIdAndMoth(e.getEmpIdInt(), month);
-           result.add(statistic);
+
+       try{
+           for(var item : employeeRepository.findAll()){
+               Statistic statistic = getAllByEmpIdAndMoth(item.getEmpIdInt(), month);
+               if (statistic == null) {
+                  continue;
+               }
+               result.add(statistic);
+
+           }
+
+       }
+       catch (Exception exception){
+           System.out.println("Exception");
        }
 
        return statisticRepository.saveAll(result);

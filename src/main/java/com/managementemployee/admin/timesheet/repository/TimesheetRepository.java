@@ -22,7 +22,7 @@ public interface TimesheetRepository extends JpaRepository<Timesheet, Integer> {
     List <Timesheet> findAllByTrash(int trash);
 
 
-    @Query( value = "SELECT * FROM timesheet as t WHERE  t.emp_id = ?1 and MONTH(t.date_in) = ?2 and t.status = 1",  nativeQuery = true)
+    @Query( value = "SELECT * FROM timesheet as t WHERE  t.emp_id = ?1 and MONTH(t.date_in) = ?2 and t.status = 1 and trash = 0",  nativeQuery = true)
     List<Timesheet> findAllByEmpIdAndMoth(Integer empId, Integer month);
 
 }
